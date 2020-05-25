@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Canvas教程-绘制形状</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <style type="text/css">
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    既然我们已经设置了 canvas 环境，我们可以深入了解如何在canvas上绘制。到本文的最后，你将学会如何绘制矩形，三角形
+    直线，圆弧和曲线，变得熟悉这些基本的形状。绘制物体到 Canvas 前，需要掌握路径，我们看看到底怎么做。
+  </div>
+
+  <h3>栅格</h3>
+  <div>
+    <img src="./Canvas_default_grid.png" >
+  </div>
+
+
+  <h3>绘制矩形</h3>
+  <p>
+    不同于 SVG，<code>&lt;canvas/&gt;</code>只支持两种形式的图形绘制：矩形和路径（由一系列点连成的线段）。所有其他类型
+    的图形都是通过一条或者多条路径组合而成的。不过，我们拥有众多路径生成的方法让复杂的图形绘制成为了可能。
+  </p>
+
+  <ul>
+    <li><strong>fillRect(x, y, width, height)</strong>：绘制一个填充的矩形</li>
+    <li><strong>strokeRect(x, y, width, height)</strong>：绘制一个矩形的边框</li>
+    <li><strong>clearRect(x, y, width, height)</strong>：清楚指定矩形区域，让清楚部分完全透明</li>
+  </ul>
+
+  <!-- <canvas>元素 -->
+  <canvas id="canvas" width="150" height="150"></canvas>
+
+
+  <h3>绘制路径</h3>
+  <p>
+    图形的基本元素是路径。路径是通过不同颜色和宽度的线段或曲线相连形成的不同形状的点的集合。一个路径，甚至一个子路径，都是闭合的。
+  </p>
+  <ol>
+    <li>首先，你要创建路径起始点。</li>
+    <li>然后你使用画图命令去画出路径。</li>
+    <li>之后你把路径封闭。</li>
+    <li>一旦路径生成，你就能通过描边或填充路径区域来渲染图形。</li>
+  </ol>
+  <ul>
+    <li><strong>beginPath()</strong>：新建一条路径，生成之后，图形绘制命令被指向到路径上生成路径。</li>
+    <li><strong>closePath()</strong>：闭合路径之后图形绘制命令又重新向到上下文中。 框</li>
+    <li><strong>stroke()</strong>：通过线条来绘制图形轮廓。</li>
+    <li><strong>fill()</strong>：通过填充路径的内容区域生成实心的图形。</li>
+  </ul>
+
+  <h4>绘制一个三角形</h4>
+  <!-- 三角形 -->
+  <canvas id="sanjiao" width="150" height="150"></canvas>
+
+  <h4>移动笔触</h4>
+  <ul>
+    <li><strong>moveTo()</strong>：将笔触移动到指定的坐标x以及y上。</li>
+  </ul>
+  <canvas id="smileFace" width="150" height="150"></canvas>
+
+
+  <h4>线</h4>
+  <ul>
+    <li><strong>lineTo()</strong>：绘制一条从当前位置到指定x以及y位置的直线。</li>
+  </ul>
+
+
+
+  <h4>圆弧</h4>
+  <ul>
+    <li><strong>arc(x, y, radius, startAngle, endAngle, anticlockwise)</strong>：画一个以(x, y)为圆心的以radius为半径的圆弧(圆)，
+    从startAngle开始到endAngle结束，按照anticlockwise给定的方向(默认为顺时针)来生成。</li>
+  </ul>
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+</body>
+
+<script type="text/javascript">
+  // 一个简单例子
+  function draw() {
+    
+    // 渲染上下文
+    var canvas = document.getElementById("canvas");
+
+    // 检查支持性
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+
+      ctx.fillRect(25, 25, 100, 100);
+      ctx.clearRect(45, 45, 60, 60);
+      ctx.strokeRect(50, 50, 50, 50);
+    }
+
+    // 绘制一个三角形
+    // 渲染上下文
+    var canvas = document.getElementById("sanjiao");
+
+    // 检查支持性
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+
+      ctx.beginPath();
+      ctx.moveTo(75, 50);
+      ctx.lineTo(100, 75);
+      ctx.lineTo(100, 25);
+      // ctx.fill();  
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+
+    // 绘制一个笑脸
+    var canvas = document.getElementById("smileFace");
+
+    // 检查支持性
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+
+      ctx.beginPath();
+      ctx.arc(75, 75, 50, 0, Math.PI * 2, true);  // 绘制
+
+      ctx.moveTo(110, 75);
+      ctx.arc(75, 75, 35, 0, Math.PI, false);     // 口（顺时针）
+
+      ctx.moveTo(65, 65);
+      ctx.arc(60, 65, 5, 0, Math.PI * 2, true);   // 左眼
+      ctx.moveTo(95, 65);
+      ctx.arc(90, 65, 5, 0, Math.PI * 2, true);  // 右眼
+      ctx.stroke();
+    }
+    
+  }
+
+  window.onload = function() {
+    console.log('初始化成功')
+    draw();
+  }
+</script>
+</html>
