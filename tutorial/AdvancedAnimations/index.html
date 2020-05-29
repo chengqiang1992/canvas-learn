@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Canvas教程-高级动画</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <style type="text/css">
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <h2>高级动画</h2>
+  <p>
+    在上一章，我们制作了<a href="../BasicAnimations/index.html">基本动画</a>以及逐步了解让物件移动的方法。在这一部分，
+    我们将会对运动有更深的了解并学会添加一些符合物理的运动以让我们的动画更加高级。
+  </p>
+  <hr />
+
+
+
+
+  <h3>绘制小球</h3>
+  <canvas id="canvas" width="600" height="300"></canvas>
+
+
+
+
+
+
+
+
+
+
+  <h3>动画的基本步骤</h3>
+  <p>你可以通过以下的步骤来画出一帧：</p>
+  <ol>
+    <li><strong>清空 canvas</strong>：除非接下来要画的内容完全充满 canvas（例如背景图），否则你需要清空所有。
+      最简单的做法就是用 clearRect 方法。</li>
+    <li><strong>保存 canvas 状态</strong>：如果你要改变一些会改变 canvas 状态的设置 （样式，变形之类的），
+      又要在每画一帧之时都是原始状态的话，你需要先保存一下。</li>
+    <li><strong>绘制动画图形（animated shapes）</strong>：这一步才是重绘动画帧。</li>
+    <li><strong>恢复 canvas 状态</strong>：如果已经保存了 canvas 的状态，可以先恢复它，然后重绘下一帧。</li>
+  </ol>
+
+
+
+
+  <h3>操控动画 Controlling an animation</h3>
+  <ul>
+    <li><strong>setInterval(function, delay)</strong>：当设定好间隔时间后，function会定期执行。</li>
+    <li><strong>setTimeout(function, delay)</strong>：在设定好的时间之后执行函数</li>
+    <li><strong>requestAnimationFrame(callback)</strong>：告诉浏览器你希望执行一个动画，并在重绘之前，
+      请求浏览器执行一个特定的函数来更新动画。</li>
+  </ul>
+
+  <aside style=" color: #999; ">下面的例子，采用 window.requestAnimationFrame()实现动画效果。这个方法提供了更加平缓并更加有效率的
+    方式来执行动画，当系统准备好了重绘条件的时候，才调用绘制动画帧。一般每秒钟回调函数执行60次，也有可能会被降低。
+    想要了解更多关于动画循环的信息，尤其是游戏，可以在Game development zone 参考这篇文章 Anatomy of a video 
+    game。
+  </aside>
+
+
+
+
+
+
+
+
+
+  <h3>太阳系的动画</h3>
+  <canvas id="canvas" width="300" height="300"></canvas>
+
+
+  <h3>动画时钟</h3>
+  <canvas id="canvas2" width="150" height="150"></canvas>
+
+  <h3>循环全景照片</h3>
+  <canvas id="canvas3" width="800" height="200"></canvas>
+
+
+</body>
+
+<script type="text/javascript">
+
+  // function draw() {
+  //   // fillStyle 示例
+  //   // 渲染上下文
+  //   var canvas = document.getElementById("canvas");
+  //   // 检查支持性
+  //   if (canvas.getContext) {
+  //     var ctx = canvas.getContext('2d');
+  //   }
+  // }
+
+  // window.onload = function() {
+  //   draw()
+  // }
+
+
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext('2d');
+  var raf;
+  var running = false;
+
+  var ball = {
+    x: 100,
+    y: 100,
+    vx: 5,
+    vy: 1,
+    radius: 25,
+    color: 'blue',
+
+    draw: function () {
+      /**
+        * 新建一条路径，生成之后，图形绘制命令被指向到路径上生成路径。
+        * 本质上，路径是由很多子路径构成，这些子路径都是在一个列表中，所有的子路径（线、弧形、等等）构成图形。
+        * 而每次这个方法调用之后，列表清空重置，然后我们就可以重新绘制新的图形。
+      */
+      ctx.beginPath();
+
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+
+      ctx.closePath();  // 闭合路径之后图形绘制命令又重新指向到上下文中。
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    }
+  };
+
+  function clear() {
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+
+  function draw() {
+    clear();
+
+    ball.draw();
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    ball.vy *= .99;
+    ball.vy += .25;
+
+    if (ball.y + ball.vy > canvas.height || ball.y + ball.vy < 0) {
+      ball.vy = -ball.vy;
+    }
+    if (ball.x + ball.vx > canvas.width || ball.x + ball.vx < 0) {
+      ball.vx = -ball.vx;
+    }
+    raf = window.requestAnimationFrame(draw)
+  }
+
+  canvas.addEventListener('mouseover', function(e) {
+    // raf = window.requestAnimationFrame(draw);
+    if (!running) {
+      clear();
+      ball.x = e.offsetX;
+      ball.y = e.offsetY;
+      ball.draw()
+    }
+  })
+
+  canvas.addEventListener('click', function(e) {
+    if (!running) {
+      raf = window.requestAnimationFrame(draw);
+      running = true;
+    }
+  })
+
+  canvas.addEventListener('mouseout', function(e) {
+    window.cancelAnimationFrame(raf);
+    running = false;
+  })
+
+  ball.draw();
+</script>
+</html>
