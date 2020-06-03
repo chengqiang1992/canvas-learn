@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Hello World</title>
+  <style>* {padding: 0; margin: 0}</style>
 </head>
   <script src="../pixi.min.js"></script>
 <body>
@@ -15,10 +16,26 @@
     PIXI.utils.sayHello(type)
 
     //Create a Pixi Application
-    let app = new PIXI.Application({width: 256, height: 256});
+    let app = new PIXI.Application({
+      width: 256,
+      height: 256,
+      antialias: true,    // default: false
+      transparent: false, // default: false
+      resolution: 1       // default: 1
+    });
 
     //Add the canvas that Pixi automatically created for you to the HTML document
     document.body.appendChild(app.view);
+
+    app.renderer.backgroundColor = 0x061639;
+    
+    app.renderer.autoResize = true;
+    app.renderer.resize(512, 512);
+
+    app.renderer.view.style.position = "absolute";
+    app.renderer.view.style.display = "block";
+    app.renderer.autoResize = true;
+    app.renderer.resize(window.innerWidth, window.innerHeight);
   </script>
 </body>
 </html>
